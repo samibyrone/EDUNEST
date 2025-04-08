@@ -1,8 +1,12 @@
 package com.semicolon.africa.service;
 
 import com.semicolon.africa.data.repositories.UserRepository;
+import com.semicolon.africa.dtos.Request.UserLoginRequest;
 import com.semicolon.africa.dtos.Request.UserRegisterRequest;
+import com.semicolon.africa.dtos.Response.UserLoginResponse;
 import com.semicolon.africa.dtos.Response.UserRegisterResponse;
+import com.semicolon.africa.exception.EmailAlreadyExist;
+import com.semicolon.africa.exception.WrongEmailOrPassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,16 +52,62 @@ class UserServiceImplementationTest {
         UserRegisterResponse response = userServiceImplementation.registerUser(request);
         return response;
     }
-//
-//    @Test
-//    void getAllUsers() {
-//    }
-//
-//    @Test
-//    void getUserById() {
-//    }
-//
-//    @Test
-//    void loginUser() {
-//    }
+
+    @Test
+    public void testThatTwo_usersCanBeRegisteredSuccessfully() {
+        Registration();
+        UserRegisterRequest userRequest = new UserRegisterRequest();
+        userRequest.setFirstName("Martins");
+        userRequest.setLastName("Shola");
+        userRequest.setUserName("Oluwanishola");
+        userRequest.setPhoneNumber("08187606899");
+        userRequest.setAddress("sabo bus-stop yaba, Lagos");
+        userRequest.setEmail("martins@gmail.com");
+        userRequest.setPassword("password12345");
+        UserRegisterResponse response = userServiceImplementation.registerUser(userRequest);
+        assertThat(response).isNotNull();
+        assertThat(response.getMessage()).contains("Registered Successfully");
+        assertThat(userServiceImplementation.getAllUsers().size()).isEqualTo(2L);
+    }
+
+    @Test
+    public void testThatUserCanLoginSuccessfully() {
+        Registration();
+        UserLoginRequest loginRequest = new UserLoginRequest();
+        loginRequest.setEmail("sammy@gmail.com");
+        loginRequest.setPassword("password");
+        UserLoginResponse loginResponse = userServiceImplementation.loginUser(loginRequest);
+        assertThat(loginResponse).isNotNull();
+        assertThat(loginResponse.getMessage()).contains("Logged In Successfully");
+        assertThat(loginResponse.isLoggedIn()).isTrue();
+        assertThat(userServiceImplementation.getAllUsers().size()).isEqualTo(1L);
+    }
+
+    @Test
+    public void testThatOneUser_cannotRegisterWith_twiceWithTheSameEmail() {
+        Registration();
+        UserRegisterRequest userRequest = new UserRegisterRequest();
+        userRequest.setFirstName("2Being");
+        userRequest.setLastName("tobi");
+        userRequest.setUserName("2Being");
+        userRequest.setPhoneNumber("08187606898");
+        userRequest.setAddress("23th Aveanue festac town");
+        userRequest.setEmail("sammy@gmail.com");
+        userRequest.setPassword("12345");
+        assertThrows(EmailAlreadyExist.class, () -> userServiceImplementation.registerUser(userRequest));
+        assertThat(userServiceImplementation.getAllUsers().size()).isEqualTo(1L);
+    }
+
+    @Test
+    public void testThatOneUser_cannotLoginWith_TheWrongPassword() {
+        Registration();
+        UserLoginRequest loginRequest = new UserLoginRequest();
+        loginRequest.setEmail("sammy@gmail.com");
+        loginRequest.setPassword("password12345");
+        UserLoginResponse loginResponse = userServiceImplementation.loginUser(loginRequest);
+        assertThat(loginResponse).isNotNull();
+        assertThrows(WrongEmailOrPassword.class, () -> userServiceImplementation.loginUser(loginRequest));
+        assertThat(loginResponse.getMessage().contains(WrongEmailOrPassword.class.getSimpleName())).isTrue();
+        assertThat(loginResponse.isLoggedIn()).isFalse();
+    }
 }

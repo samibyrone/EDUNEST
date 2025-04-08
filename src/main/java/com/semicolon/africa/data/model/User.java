@@ -19,7 +19,7 @@ public class User {
     @Id
     @jakarta.persistence.Id
     @GeneratedValue
-    private String Id;
+    private Long Id;
     private String firstName;
     private String lastName;
     private String userName;
