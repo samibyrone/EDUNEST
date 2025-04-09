@@ -7,8 +7,11 @@ import com.semicolon.africa.dtos.Request.UserRegisterRequest;
 import com.semicolon.africa.dtos.Response.UserLoginResponse;
 import com.semicolon.africa.dtos.Response.UserRegisterResponse;
 import com.semicolon.africa.exception.EmailAlreadyExist;
+import com.semicolon.africa.exception.WrongEmailOrPassword;
 import com.semicolon.africa.exception.userNotFoundException;
+import com.semicolon.africa.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +23,21 @@ import static com.semicolon.africa.utils.Mapper.mapUserRegister;
 @Service
 public class UserServiceImplementation implements UserService {
 
+//    @Autowired
+    private final UserRepository userRepository;
+
+//    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
+//    @Autowired
+    private final Mapper mapper;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImplementation(PasswordEncoder passwordEncoder, UserRepository userRepository, Mapper mapper) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.mapper = mapper;
+    }
 
     @Override
     public UserRegisterResponse registerUser(UserRegisterRequest userRegister) {
@@ -34,7 +50,7 @@ public class UserServiceImplementation implements UserService {
 
     private void emailValidation(String email) {
         boolean existsByEmail = userRepository.existsByEmail(email);
-        if (existsByEmail) throw new EmailAlreadyExist("Email Already Exist");
+        if (existsByEmail) throw new EmailAlreadyExist("User Already Exist With This Email");
     }
 
     @Override
@@ -50,7 +66,8 @@ public class UserServiceImplementation implements UserService {
     @Override
     public UserLoginResponse loginUser(UserLoginRequest userLogin) {
         User user = findByEmail(userLogin.getEmail());
-        mapUserLogin(user);
+        if (!passwordEncoder.matches(userLogin.getPassword(), user.getPassword())) {
+            throw new WrongEmailOrPassword("Invalid Credentials"); }
         user.setLoggedIn(true);
         userRepository.save(user);
         return mapUserLogin(user);

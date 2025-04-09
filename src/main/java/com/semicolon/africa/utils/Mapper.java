@@ -5,8 +5,19 @@ import com.semicolon.africa.dtos.Request.UserLoginRequest;
 import com.semicolon.africa.dtos.Request.UserRegisterRequest;
 import com.semicolon.africa.dtos.Response.UserLoginResponse;
 import com.semicolon.africa.dtos.Response.UserRegisterResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Mapper {
+
+    private static PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public Mapper(PasswordEncoder passwordEncoder) {
+        Mapper.passwordEncoder = passwordEncoder;
+    }
 
     public static void mapUserRegister(UserRegisterRequest userRegisterRequest, User user) {
         user.setFirstName(userRegisterRequest.getFirstName());
@@ -15,7 +26,7 @@ public class Mapper {
         user.setAddress(userRegisterRequest.getAddress());
         user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
         user.setEmail(userRegisterRequest.getEmail());
-        user.setPassword(userRegisterRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
     }
 
     public static UserRegisterResponse mapUserRegister(User user) {
@@ -27,7 +38,7 @@ public class Mapper {
 
    public static void mapUserLogin(UserLoginRequest userLoginRequest, User user) {
         user.setEmail(userLoginRequest.getEmail());
-        user.setPassword(userLoginRequest.getPassword());
+        user.setPassword(passwordEncoder.encode(userLoginRequest.getPassword()));
    }
 
    public static UserLoginResponse mapUserLogin(User user) {

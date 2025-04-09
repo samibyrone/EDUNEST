@@ -7,10 +7,12 @@ import com.semicolon.africa.dtos.Response.UserLoginResponse;
 import com.semicolon.africa.dtos.Response.UserRegisterResponse;
 import com.semicolon.africa.exception.EmailAlreadyExist;
 import com.semicolon.africa.exception.WrongEmailOrPassword;
+import com.semicolon.africa.utils.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,9 @@ class UserServiceImplementationTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private Mapper mapper;
 
     @BeforeEach
     public void setup() {
@@ -106,8 +111,8 @@ class UserServiceImplementationTest {
         loginRequest.setPassword("password12345");
         UserLoginResponse loginResponse = userServiceImplementation.loginUser(loginRequest);
         assertThat(loginResponse).isNotNull();
-        assertThrows(WrongEmailOrPassword.class, () -> userServiceImplementation.loginUser(loginRequest));
         assertThat(loginResponse.getMessage().contains(WrongEmailOrPassword.class.getSimpleName())).isTrue();
+        assertThrows(WrongEmailOrPassword.class, () -> userServiceImplementation.loginUser(loginRequest));
         assertThat(loginResponse.isLoggedIn()).isFalse();
     }
 }
