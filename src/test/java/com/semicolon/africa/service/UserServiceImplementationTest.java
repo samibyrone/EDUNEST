@@ -7,28 +7,23 @@ import com.semicolon.africa.dtos.Response.UserLoginResponse;
 import com.semicolon.africa.dtos.Response.UserRegisterResponse;
 import com.semicolon.africa.exception.EmailAlreadyExist;
 import com.semicolon.africa.exception.WrongEmailOrPassword;
-import com.semicolon.africa.utils.Mapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-class UserServiceImplementationTest {
+public class UserServiceImplementationTest {
 
     @Autowired
     private UserServiceImplementation userServiceImplementation;
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private Mapper mapper;
 
     @BeforeEach
     public void setup() {

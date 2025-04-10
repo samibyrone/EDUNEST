@@ -9,6 +9,5 @@ public class UserLoginResponse {
     @Id
     private Long id;
     private String message;
-    private String email;
     private boolean isLoggedIn;
 }
