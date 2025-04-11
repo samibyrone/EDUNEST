@@ -1,5 +1,6 @@
 package com.semicolon.africa.service;
 
+import com.semicolon.africa.data.model.User;
 import com.semicolon.africa.data.repositories.UserRepository;
 import com.semicolon.africa.dtos.Request.UserLoginRequest;
 import com.semicolon.africa.dtos.Request.UserRegisterRequest;
@@ -104,10 +105,8 @@ public class UserServiceImplementationTest {
         UserLoginRequest loginRequest = new UserLoginRequest();
         loginRequest.setEmail("sammy@gmail.com");
         loginRequest.setPassword("password12345");
-        UserLoginResponse loginResponse = userServiceImplementation.loginUser(loginRequest);
-        assertThat(loginResponse).isNotNull();
-        assertThat(loginResponse.getMessage().contains(WrongEmailOrPassword.class.getSimpleName())).isTrue();
         assertThrows(WrongEmailOrPassword.class, () -> userServiceImplementation.loginUser(loginRequest));
-        assertThat(loginResponse.isLoggedIn()).isFalse();
+        User user = userRepository.findByEmail("sammy@gmail.com").orElseThrow( () -> new AssertionError("User not found"));
+        assertThat(user.isLoggedIn()).isFalse();
     }
 }
