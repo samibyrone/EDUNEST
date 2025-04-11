@@ -19,14 +19,14 @@ public class Mapper {
         Mapper.passwordEncoder = passwordEncoder;
     }
 
-    public static void mapUserRegister(UserRegisterRequest userRegisterRequest, User user) {
-        user.setFirstName(userRegisterRequest.getFirstName());
-        user.setLastName(userRegisterRequest.getLastName());
-        user.setUserName(userRegisterRequest.getUserName());
-        user.setAddress(userRegisterRequest.getAddress());
-        user.setPhoneNumber(userRegisterRequest.getPhoneNumber());
-        user.setEmail(userRegisterRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userRegisterRequest.getPassword()));
+    public static void mapUserRegister(UserRegisterRequest userRegister, User user) {
+        user.setFirstName(userRegister.getFirstName());
+        user.setLastName(userRegister.getLastName());
+        user.setUserName(userRegister.getUserName());
+        user.setAddress(userRegister.getAddress());
+        user.setPhoneNumber(userRegister.getPhoneNumber());
+        user.setEmail(userRegister.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegister.getPassword()));
     }
 
     public static UserRegisterResponse mapUserRegister(User user) {
@@ -36,16 +36,16 @@ public class Mapper {
         return userRegister;
     }
 
-   public static void mapUserLogin(UserLoginRequest userLoginRequest, User user) {
-        user.setEmail(userLoginRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userLoginRequest.getPassword()));
-   }
+    public static void mapUserLogin(UserLoginRequest userLogin, User user) {
+        user.setEmail(userLogin.getEmail());
+        user.setPassword(passwordEncoder.encode(userLogin.getPassword()));
+    }
 
-   public static UserLoginResponse mapUserLogin(User user) {
+    public static UserLoginResponse mapUserLogin(User user) {
         UserLoginResponse userLogin = new UserLoginResponse();
         userLogin.setId(user.getId());
         userLogin.setLoggedIn(true);
         userLogin.setMessage("Logged In Successfully");
         return userLogin;
-   }
+    }
 }

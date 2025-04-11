@@ -75,6 +75,6 @@ public class UserServiceImplementation implements UserService {
 
     private User findByEmail (String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow( () -> new userNotFoundException("User does not exist"));
+                .orElseThrow( () -> new userNotFoundException("User Email does not exist"));
     }
 }
