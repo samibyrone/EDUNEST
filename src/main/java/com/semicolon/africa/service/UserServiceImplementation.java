@@ -23,13 +23,10 @@ import static com.semicolon.africa.utils.Mapper.mapUserRegister;
 @Service
 public class UserServiceImplementation implements UserService {
 
-//    @Autowired
     private final UserRepository userRepository;
 
-//    @Autowired
     private final PasswordEncoder passwordEncoder;
 
-//    @Autowired
     private final Mapper mapper;
 
     @Autowired
