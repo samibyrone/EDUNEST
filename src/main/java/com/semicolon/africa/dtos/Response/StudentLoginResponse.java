@@ -4,10 +4,13 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 @Data
-public class UserRegisterResponse {
+public class StudentLoginResponse {
 
     @Id
     private Long id;
-    private String message;
     private String email;
+    private String role;
+    private String token;
+    private String message;
+    private boolean isLoggedIn;
 }

@@ -1,6 +1,6 @@
 package com.semicolon.africa.data.repositories;
 
-import com.semicolon.africa.data.model.User;
+import com.semicolon.africa.data.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,9 +8,9 @@ import java.util.Optional;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface StudentRepository extends JpaRepository<Student, String> {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findByEmail(String email);
+    Optional<Student> findByEmail(String email);
 }

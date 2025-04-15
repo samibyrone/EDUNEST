@@ -14,17 +14,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class User implements UserDetails {
+
+public class Student implements UserDetails {
 
     @Id
     @jakarta.persistence.Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     private String firstName;
     private String lastName;
@@ -36,7 +38,7 @@ public class User implements UserDetails {
     private boolean isLoggedIn;
 
     @Enumerated(EnumType.STRING)
-    private USERTYPE role;
+    private STUDENT_TYPE role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
