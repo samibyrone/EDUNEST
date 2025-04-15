@@ -8,13 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "admin")
+public class Admin {
 
     @Id
     @jakarta.persistence.Id
@@ -28,4 +29,5 @@ public class User {
     private String phoneNumber;
     private String address;
     private boolean isLoggedIn;
+
 }
