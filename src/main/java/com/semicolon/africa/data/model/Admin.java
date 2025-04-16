@@ -14,7 +14,7 @@ import org.springframework.data.annotation.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "admin")
+@Table
 public class Admin {
 
     @Id

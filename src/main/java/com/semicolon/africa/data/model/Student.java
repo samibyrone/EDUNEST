@@ -24,6 +24,10 @@ import java.util.List;
 
 public class Student implements UserDetails {
 
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private  Student student;
+
     @Id
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +43,10 @@ public class Student implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private STUDENT_TYPE role;
+
+    public Student(Student student) {
+        this.student = student;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
