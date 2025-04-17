@@ -17,8 +17,9 @@ public interface StudentService {
 
     List<Student> getAllUsers();
 
-    Optional<Student> getUserById(String id);
+    Optional<Student> getUserById(Long id);
 
     StudentLoginResponse loginStudent(StudentLoginRequest studentLoginRequest);
 
+    Optional <Student> findByUserName(String userName);
 }

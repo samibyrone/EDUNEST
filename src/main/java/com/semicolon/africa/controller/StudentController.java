@@ -1,6 +1,5 @@
 package com.semicolon.africa.controller;
 
-import com.semicolon.africa.data.model.Student;
 import com.semicolon.africa.dtos.Request.StudentRegisterRequest;
 import com.semicolon.africa.dtos.Response.StudentRegisterResponse;
 import com.semicolon.africa.service.StudentServiceImplementation;
