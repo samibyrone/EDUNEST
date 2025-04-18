@@ -8,8 +8,8 @@ import com.semicolon.africa.dtos.Response.StudentLoginResponse;
 import com.semicolon.africa.dtos.Response.StudentRegisterResponse;
 import com.semicolon.africa.exception.EmailAlreadyExist;
 import com.semicolon.africa.exception.WrongEmailOrPassword;
-import com.semicolon.africa.exception.userNotFoundException;
-import com.semicolon.africa.utils.Mapper;
+import com.semicolon.africa.exception.UserNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,19 +21,17 @@ import static com.semicolon.africa.utils.Mapper.mapStudentLogin;
 import static com.semicolon.africa.utils.Mapper.mapStudentRegister;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImplementation implements StudentService {
 
     private final StudentRepository studentRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    private final Mapper mapper;
-
     @Autowired
-    public StudentServiceImplementation(PasswordEncoder passwordEncoder, StudentRepository studentRepository, Mapper mapper) {
+    public StudentServiceImplementation(PasswordEncoder passwordEncoder, StudentRepository studentRepository) {
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
-        this.mapper = mapper;
     }
 
     @Override
@@ -56,8 +54,8 @@ public class StudentServiceImplementation implements StudentService {
     }
 
     @Override
-    public Optional<Student> getUserById(String id) {
-        return Optional.empty();
+    public Optional<Student> getUserById(Long id) {
+        return studentRepository.findById(id);
     }
 
     @Override
@@ -70,8 +68,13 @@ public class StudentServiceImplementation implements StudentService {
         return mapStudentLogin(student);
     }
 
+    @Override
+    public Optional<Student> findByUserName(String userName) {
+        return studentRepository.findByUserName(userName);
+    }
+
     private Student findByEmail (String email) {
         return studentRepository.findByEmail(email)
-                .orElseThrow( () -> new userNotFoundException("User Email does not exist"));
+                .orElseThrow( () -> new UserNotFoundException("User Email does not exist"));
     }
 }

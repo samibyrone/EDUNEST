@@ -2,20 +2,18 @@ package com.semicolon.africa.data.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "admin")
-public class Admin {
+@Table
+public class Admin extends Student{
 
     @Id
     @jakarta.persistence.Id
