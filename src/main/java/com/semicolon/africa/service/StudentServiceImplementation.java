@@ -1,5 +1,6 @@
 package com.semicolon.africa.service;
 
+import com.semicolon.africa.configuration.JwtService;
 import com.semicolon.africa.data.model.Student;
 import com.semicolon.africa.data.repositories.StudentRepository;
 import com.semicolon.africa.dtos.Request.StudentLoginRequest;
@@ -11,6 +12,10 @@ import com.semicolon.africa.exception.WrongEmailOrPassword;
 import com.semicolon.africa.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,12 @@ public class StudentServiceImplementation implements StudentService {
     private final StudentRepository studentRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    AuthenticationManager authManager;
 
     @Autowired
     public StudentServiceImplementation(PasswordEncoder passwordEncoder, StudentRepository studentRepository) {
@@ -56,6 +67,14 @@ public class StudentServiceImplementation implements StudentService {
     @Override
     public Optional<Student> getUserById(Long id) {
         return studentRepository.findById(id);
+    }
+
+    public String verifyStudent(StudentRegisterRequest userRegister) {
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userRegister.getUserName(), userRegister.getPassword()));
+            if(authentication.isAuthenticated())
+                return jwtService.generateToken((UserDetails) studentRepository);
+
+            return "Failed";
     }
 
     @Override
