@@ -21,7 +21,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-
 public class Student implements UserDetails {
 
     @ManyToOne
@@ -43,6 +42,9 @@ public class Student implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private STUDENT_TYPE role;
+
+    @OneToMany()
+    private List<LoanApplication> loanApplications;
 
     public Student(Student student) {
         this.student = student;
