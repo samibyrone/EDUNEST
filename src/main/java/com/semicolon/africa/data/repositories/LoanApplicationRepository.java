@@ -1,4 +1,9 @@
 package com.semicolon.africa.data.repositories;
 
-public interface LoanApplicationRepository {
+import com.semicolon.africa.data.model.LoanApplication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface LoanApplicationRepository extends JpaRepository<LoanApplication, String> {
 }
