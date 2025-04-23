@@ -17,3 +17,6 @@ spring:
 jwt:
   secret: sF3vR9XkLp6Yq2wA7zTbNcJmZ4eV5D1K8hG0fPdSxQyWuBrOiMlIgHnCtUjL
   expiration-ms: 86400000
+
+#server:
+#  port: 8000
