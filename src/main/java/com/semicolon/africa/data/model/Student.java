@@ -23,9 +23,9 @@ import java.util.List;
 @Table(name = "users")
 public class Student implements UserDetails {
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private  Student student;
+//    @ManyToOne
+//    @JoinColumn(name = "student_id")
+//    private  Student student;
 
     @Id
     @jakarta.persistence.Id
@@ -43,12 +43,12 @@ public class Student implements UserDetails {
     @Enumerated(EnumType.STRING)
     private STUDENT_TYPE role;
 
-    @OneToMany()
-    private List<LoanApplication> loanApplications;
-
-    public Student(Student student) {
-        this.student = student;
-    }
+//    @OneToMany()
+//    private List<LoanApplication> loanApplications;
+//
+//    public Student(Student student) {
+//        this.student = student;
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

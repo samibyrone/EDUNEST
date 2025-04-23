@@ -30,4 +30,6 @@ public class LoanPolicy {
     @ManyToMany
     private List<LoanApplication> loanApplications;
 
+    public BigDecimal getBaseAmount() {
+    }
 }

@@ -20,7 +20,7 @@ public class Verification {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private VERIFICATION_STATUS status
+    private VERIFICATION_STATUS status;
 
     private LocalDate verifiedDate;
 
