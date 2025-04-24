@@ -1,13 +1,20 @@
 package com.semicolon.africa.utils;
 
+import com.semicolon.africa.data.model.LOAN_STATUS;
+import com.semicolon.africa.data.model.LoanApplication;
 import com.semicolon.africa.data.model.Student;
+import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
 import com.semicolon.africa.dtos.Request.StudentLoginRequest;
 import com.semicolon.africa.dtos.Request.StudentRegisterRequest;
+import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
 import com.semicolon.africa.dtos.Response.StudentLoginResponse;
 import com.semicolon.africa.dtos.Response.StudentRegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Component
 public class Mapper {
@@ -47,5 +54,21 @@ public class Mapper {
         studentLogin.setLoggedIn(true);
         studentLogin.setMessage("Logged In Successfully");
         return studentLogin;
+    }
+
+    public static void mapLoanApplication(LoanApplicationRequest loanRequest, LoanApplication loanApplication) {
+        loanApplication.setLoanAmount(loanRequest.getLoanAmount());
+        loanApplication.setMonthlyUpkeep(loanRequest.getMonthlyUpkeep());
+        loanApplication.setLoanDurationMonths(loanRequest.getLoanDurationMonths());
+        loanApplication.setApplicationDate(LocalDateTime.now());
+    }
+
+    public static LoanApplicationResponse mapLoanApplication(LoanApplication loanApplication) {
+        LoanApplicationResponse loanResponse = new LoanApplicationResponse();
+        loanResponse.setLoanApplicationId(loanApplication.getId());
+        loanResponse.setEmail(loanResponse.getEmail());
+        loanResponse.setStatus(LOAN_STATUS.PENDING);
+        loanResponse.setMessage("Loan Application Processed Successfully");
+        return loanResponse;
     }
 }

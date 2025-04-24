@@ -1,9 +1,6 @@
 package com.semicolon.africa.data.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,16 +17,16 @@ import java.util.List;
 public class LoanPolicy {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String policyName;
     private String policyDescription;
     private BigDecimal maxAmount;
+    private BigDecimal minAmount;
     private String eligibilityLevel;
 
     @ManyToMany
     private List<LoanApplication> loanApplications;
 
-    public BigDecimal getBaseAmount() {
-    }
 }

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -19,13 +19,19 @@ public class Verification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private double VerifiedSchoolFees;
+    private double verifiedMonthlyUpkeep;
+
     @Enumerated(EnumType.STRING)
     private VERIFICATION_STATUS status;
 
-    private LocalDate verifiedDate;
+    private LocalDateTime verifiedDate;
 
     @OneToOne
-    @JoinColumn(name = "admin_id")
+//    @JoinColumn(name = "admin_id")
     private LoanApplication loanApplication;
+
+//    @ManyToOne
+//    private User admin;
 
 }
