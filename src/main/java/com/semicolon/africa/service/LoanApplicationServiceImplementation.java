@@ -1,22 +1,22 @@
 package com.semicolon.africa.service;
 
-import com.semicolon.africa.data.model.LOAN_STATUS;
-import com.semicolon.africa.data.model.LoanApplication;
-import com.semicolon.africa.data.model.LoanPolicy;
-import com.semicolon.africa.data.model.Student;
+import com.semicolon.africa.data.model.*;
 import com.semicolon.africa.data.repositories.LoanApplicationRepository;
 import com.semicolon.africa.data.repositories.LoanPolicyRepository;
 import com.semicolon.africa.data.repositories.StudentRepository;
-import com.semicolon.africa.exception.LoanApplicationNotFoundException;
-import com.semicolon.africa.exception.PolicyNotFoundException;
-import com.semicolon.africa.exception.StudentNotFoundException;
+import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
+import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import static com.semicolon.africa.utils.Mapper.mapLoanApplication;
 
 @Service
 @RequiredArgsConstructor
@@ -31,21 +31,6 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
     @Autowired
     private LoanPolicyRepository loanPolicyRepository;
 
-    public LoanApplicationRepository applyForLoan(Long studentId, LoanApplication application, Long policyId) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow( () -> new StudentNotFoundException("Student can not found"));
-
-        LoanPolicy policy = loanPolicyRepository.findById(policyId)
-                .orElseThrow( () -> new PolicyNotFoundException(" Student Policy can not be found"));
-
-        application.setStudent(student);
-        application.setLoanPolicy(policy);
-        application.setStatus(LOAN_STATUS.PENDING);
-        application.setLoanAmount(BigDecimal.ZERO);
-
-        return (LoanApplicationRepository) loanApplicationRepository.save(application);
-    }
-
     public List<LoanApplication> getStudentApplications(Long studentId) {
         return loanApplicationRepository.findByStudentId(studentId);
     }
@@ -54,17 +39,65 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         return loanApplicationRepository.findById(loanApplicationId);
     }
 
-    public LoanApplication updateLoanStatus(Long loanApplicationId, LOAN_STATUS status) {
-        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
-                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
-        application.setStatus(status);
-        return loanApplicationRepository.save(application);
+    @Override
+    public LoanApplicationResponse applyForLoan(LoanApplicationRequest loanRequest) {
+        Student student = studentRepository.findById(loanRequest.getStudentId())
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+
+        if(loanApplicationRepository.existsByStudentAndStatus(student, LOAN_STATUS.PENDING)) {
+            throw new DuplicateApplicationException("Pending Application Already Exists!");
+        }
+
+        LoanApplication application = new LoanApplication();
+            mapLoanApplication(loanRequest, application);
+            application.setStudent(student);
+            application.setStatus(LOAN_STATUS.PENDING);
+            application.setMonthlyUpkeep(BigDecimal.ZERO);
+            application.setLoanAmount(BigDecimal.ZERO);
+
+        LoanApplication savedApplication = loanApplicationRepository.save(application);
+        return mapLoanApplication(savedApplication);
     }
 
-    public BigDecimal LoanAmount(LoanPolicy policy) {
-        BigDecimal schoolFees = policy.getBaseAmount();
-        BigDecimal monthlyUpkeep = schoolFees.multiply(policy.);
-        return monthlyUpkeep.add(monthlyUpkeep);
+    @Override
+    @Transactional
+    public LoanApplicationResponse updateLoanStatus(Long loanApplicationId, Verification verification) {
+        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
+                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
+
+        double totalAmount = calculateLoanAmount(application, verification);
+
+            if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
+                application.setStatus(LOAN_STATUS.APPROVED);
+                application.setLoanAmount(BigDecimal.valueOf(totalAmount));
+                application.setMonthlyUpkeep(BigDecimal.valueOf(verification.getVerifiedMonthlyUpkeep()));
+            } else  {
+                application.setStatus(LOAN_STATUS.REJECTED);
+            }
+        LoanApplication updatedApplication = loanApplicationRepository.save(application);
+        return mapLoanApplication(updatedApplication);
+    }
+
+
+    @Override
+    public double calculateLoanAmount(LoanApplication application, Verification verify) {
+       double schoolFees = verify.getVerifiedSchoolFees();
+       double monthlyUpkeep = verify.getVerifiedMonthlyUpkeep();
+       int monthDurations = application.getLoanDurationMonths();
+
+       double total = schoolFees + monthlyUpkeep * monthDurations;
+
+       LoanPolicy policy = loanPolicyRepository.findActivePolicy()
+               .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
+
+        if(total.compareTo(policy.getMinAmount() < 0)) {
+            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
+        }
+
+        if (total > policy.getMaxAmount()) {
+            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
+        }
+        return total;
     }
 }
 

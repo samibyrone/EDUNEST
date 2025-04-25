@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -26,10 +27,13 @@ public class LoanApplication {
     @Enumerated(EnumType.STRING)
     private LOAN_STATUS status;
 
+    private BigDecimal monthlyUpkeep;
     private BigDecimal loanAmount;
+    private int LoanDurationMonths;
+    private LocalDateTime applicationDate;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+//    @JoinColumn(name = "student_id")
     private Student student;
 
     @OneToMany(mappedBy = "loanApplication", cascade = CascadeType.ALL)
