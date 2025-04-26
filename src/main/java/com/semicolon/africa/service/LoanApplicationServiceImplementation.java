@@ -90,11 +90,15 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
        LoanPolicy policy = loanPolicyRepository.findActivePolicy()
                .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
 
-        if(total.compareTo(policy.getMinAmount() < 0)) {
+       BigDecimal totalLoan = BigDecimal.valueOf(total);
+       BigDecimal minAmount = policy.getMinAmount();
+       BigDecimal maxAmount = policy.getMaxAmount();
+
+        if(totalLoan.compareTo(minAmount) < 0) {
             throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
         }
 
-        if (total > policy.getMaxAmount()) {
+        if (totalLoan.compareTo(maxAmount) < 0) {
             throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
         }
         return total;
