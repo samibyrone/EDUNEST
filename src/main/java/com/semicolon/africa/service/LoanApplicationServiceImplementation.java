@@ -44,9 +44,16 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         Student student = studentRepository.findById(loanRequest.getStudentId())
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
+        LoanPolicy activeLoanPolicy = loanPolicyRepository.findActivePolicy()
+                .orElseThrow( () -> new NoActivePolicyException("No Active Loan Policy"));
+
         if(loanApplicationRepository.existsByStudentAndStatus(student, LOAN_STATUS.PENDING)) {
             throw new DuplicateApplicationException("Pending Application Already Exists!");
         }
+
+        validateLoanAmount(loanRequest.getLoanAmount(), activeLoanPolicy);
+        validateMonthlyUpkeep(loanRequest.getMonthlyUpkeep(), activeLoanPolicy);
+
 
         LoanApplication application = new LoanApplication();
             mapLoanApplication(loanRequest, application);
@@ -57,6 +64,20 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
         return mapLoanApplication(savedApplication);
+    }
+
+    private void validateMonthlyUpkeep(BigDecimal monthlyUpkeep, LoanPolicy activeLoanPolicy) {
+        if (monthlyUpkeep.compareTo(activeLoanPolicy.getMinAmount()) < 0 ||
+                monthlyUpkeep.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+            throw new InvalidMonthlyUpkeepAmountException("Monthly Upkeep Amount Exceeded The Loan Policy Limits");
+        }
+    }
+
+    private void validateLoanAmount(BigDecimal loanAmount, LoanPolicy activeLoanPolicy) {
+        if (loanAmount.compareTo(activeLoanPolicy.getMinAmount()) < 0 ||
+        loanAmount.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+            throw new InvalidLoanAmountException("Loan Amount Exceeded The Loan Policy Limits");
+        }
     }
 
     @Override

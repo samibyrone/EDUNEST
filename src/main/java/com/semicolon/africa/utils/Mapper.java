@@ -66,9 +66,11 @@ public class Mapper {
     public static LoanApplicationResponse mapLoanApplication(LoanApplication loanApplication) {
         LoanApplicationResponse loanResponse = new LoanApplicationResponse();
         loanResponse.setLoanApplicationId(loanApplication.getId());
-        loanResponse.setEmail(loanResponse.getEmail());
+        loanResponse.setStudentId(loanApplication.getId());
+        loanResponse.setLoanAmount(loanApplication.getLoanAmount());
+        loanResponse.setMonthlyUpkeep(loanApplication.getMonthlyUpkeep());
         loanResponse.setStatus(LOAN_STATUS.PENDING);
-        loanResponse.setMessage("Loan Application Processed Successfully");
+        loanResponse.setMessage("Loan Application Submitted Successfully");
         return loanResponse;
     }
 }

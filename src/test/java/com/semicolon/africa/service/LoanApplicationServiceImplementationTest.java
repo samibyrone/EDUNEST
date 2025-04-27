@@ -1,6 +1,7 @@
 package com.semicolon.africa.service;
 
 import com.semicolon.africa.data.model.LOAN_STATUS;
+import com.semicolon.africa.data.model.LoanApplication;
 import com.semicolon.africa.data.model.LoanPolicy;
 import com.semicolon.africa.data.model.Student;
 import com.semicolon.africa.data.repositories.LoanApplicationRepository;
@@ -62,23 +63,17 @@ class LoanApplicationServiceImplementationTest {
                 .maxAmount(BigDecimal.valueOf(200000))
                 .build();
 
-//        LoanApplicationRequest request = new LoanApplicationRequest();
-//        request.setLoanApplicationId(111L);
-//        request.setLoanAmount(BigDecimal.valueOf(150000));
-//        request.setMonthlyUpkeep(BigDecimal.valueOf(20000));
-//        request.setApplicationDate(LocalDateTime.parse("2025-04-22T07:00"));
-
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
         when(loanPolicyRepository.findActivePolicy()).thenReturn(Optional.of(policy));
-        when(loanApplicationRepository.existsByStudentAndStatus(student, LOAN_STATUS.PENDING)).thenReturn(true);
-        assertThrows(DuplicateApplicationException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        verify(loanApplicationRepository, never()).save(any());
+        when(loanApplicationRepository.existsByStudentAndStatus(student, LOAN_STATUS.PENDING)).thenReturn(false);
+
+        LoanApplicationResponse loanResponse = loanApplicationService.applyForLoan(loanRequest);
+        verify(loanApplicationRepository, times(1)).save(any(LoanApplication.class));
+        assertEquals(LOAN_STATUS.PENDING, loanResponse.getStatus());
+        assertEquals("Loan Application Submitted Successfully", loanResponse.getMessage());
+        assertEquals(BigDecimal.valueOf(150000), loanResponse.getLoanAmount());
+        assertEquals(BigDecimal.valueOf(20000), loanResponse.getMonthlyUpkeep());
+        assertEquals(1L, loanResponse.getStudentId());
     }
-
-//    private LoanApplicationResponse LoanApplications() {
-
-//        LoanApplicationResponse response = LoanApplicationService.applyForLoan(request);
-//        return response;
-//    }
 
 }
