@@ -57,6 +57,7 @@ public class Mapper {
     }
 
     public static void mapLoanApplication(LoanApplicationRequest loanRequest, LoanApplication loanApplication) {
+        loanApplication.setApplicationDate(LocalDateTime.now());
         loanApplication.setLoanAmount(loanRequest.getLoanAmount());
         loanApplication.setMonthlyUpkeep(loanRequest.getMonthlyUpkeep());
         loanApplication.setLoanDurationMonths(loanRequest.getLoanDurationMonths());
