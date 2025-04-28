@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +32,13 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
     @Autowired
     private LoanPolicyRepository loanPolicyRepository;
 
+
+    @Override
     public List<LoanApplication> getStudentApplications(Long studentId) {
         return loanApplicationRepository.findByStudentId(studentId);
     }
 
+    @Override
     public Optional<LoanApplication> getLoanApplicationById(Long loanApplicationId) {
         return loanApplicationRepository.findById(loanApplicationId);
     }
@@ -44,12 +48,18 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         Student student = studentRepository.findById(loanRequest.getStudentId())
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
+        LoanPolicy activeLoanPolicy = loanPolicyRepository.findActivePolicy()
+                .orElseThrow( () -> new NoActivePolicyException("No Active Loan Policy"));
+
         if(loanApplicationRepository.existsByStudentAndStatus(student, LOAN_STATUS.PENDING)) {
             throw new DuplicateApplicationException("Pending Application Already Exists!");
         }
 
+        validateLoanAmount(loanRequest.getLoanAmount(), loanRequest.getMonthlyUpkeep(), activeLoanPolicy);
+
         LoanApplication application = new LoanApplication();
             mapLoanApplication(loanRequest, application);
+            application.setApplicationDate(LocalDateTime.now());
             application.setStudent(student);
             application.setStatus(LOAN_STATUS.PENDING);
             application.setMonthlyUpkeep(BigDecimal.ZERO);
@@ -57,6 +67,15 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
         return mapLoanApplication(savedApplication);
+    }
+
+    private void validateLoanAmount(BigDecimal loanAmount, BigDecimal monthlyUpkeep, LoanPolicy activeLoanPolicy) {
+        if (loanAmount.compareTo(activeLoanPolicy.getMinAmount()) < 0 || loanAmount.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+            throw new InvalidLoanAmountException("Loan Amount Exceeded The Loan Policy Limits");
+        }
+        if (monthlyUpkeep.compareTo(activeLoanPolicy.getMinAmount()) < 0 || monthlyUpkeep.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+            throw new InvalidMonthlyUpkeepAmountException("Monthly Upkeep Amount Exceeded The Loan Policy Limits");
+        }
     }
 
     @Override

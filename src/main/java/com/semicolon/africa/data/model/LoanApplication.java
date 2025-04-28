@@ -39,7 +39,7 @@ public class LoanApplication {
     @OneToMany(mappedBy = "loanApplication", cascade = CascadeType.ALL)
     private List<Document> documents;
 
-    @OneToMany(mappedBy = "loanApplication", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "loanApplication", cascade = CascadeType.ALL)
     private Verification verification;
 
     @ManyToOne
