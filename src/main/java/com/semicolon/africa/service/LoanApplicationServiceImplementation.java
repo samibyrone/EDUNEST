@@ -63,7 +63,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         validateLoanAmount(loanRequest, activeLoanPolicy);
 
         LoanApplication application = new LoanApplication();
-            mapLoanApplication(loanRequest, application);
+            mapLoanApplication(loanRequest, application, student);
             application.setApplicationDate(LocalDateTime.now());
             application.setStudent(student);
             application.setStatus(LOAN_STATUS.PENDING);
@@ -127,7 +127,6 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         }
         return total;
     }
-
 
 }
 

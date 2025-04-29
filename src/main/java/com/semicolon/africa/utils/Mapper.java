@@ -38,14 +38,15 @@ public class Mapper {
 
     public static StudentRegisterResponse mapStudentRegister(Student student) {
         StudentRegisterResponse studentRegister = new StudentRegisterResponse();
+        studentRegister.setId(student.getId());
+        studentRegister.setEmail(student.getEmail());
         studentRegister.setMessage("Registered Successfully");
-        student.setEmail(student.getEmail());
         return studentRegister;
     }
 
     public static void mapStudentLogin(StudentLoginRequest studentLogin, Student student) {
         student.setEmail(studentLogin.getEmail());
-        student.setPassword(passwordEncoder.encode(studentLogin.getPassword()));
+        student.setPassword(studentLogin.getPassword());
     }
 
     public static StudentLoginResponse mapStudentLogin(Student student) {
@@ -56,14 +57,19 @@ public class Mapper {
         return studentLogin;
     }
 
-    public static void mapLoanApplication(LoanApplicationRequest loanRequest, LoanApplication loanApplication) {
+    public static void mapLoanApplication(LoanApplicationRequest loanRequest, LoanApplication loanApplication, Student student) {
         loanApplication.setLoanAmount(loanRequest.getLoanAmount());
         loanApplication.setMonthlyUpkeep(loanRequest.getMonthlyUpkeep());
         loanApplication.setLoanDurationMonths(loanRequest.getLoanDurationMonths());
+        loanApplication.setApplicationDate(loanRequest.getApplicationDate());
+        loanApplication.setApplicationDate(LocalDateTime.now());
+        loanApplication.setStatus(LOAN_STATUS.PENDING);
+        loanApplication.setStudent(student);
     }
 
     public static LoanApplicationResponse mapLoanApplication(LoanApplication loanApplication) {
         LoanApplicationResponse loanResponse = new LoanApplicationResponse();
+        loanResponse.setLoanApplicationId(loanApplication.getId());
         loanResponse.setStudentId(loanApplication.getStudent().getId());
         loanResponse.setStatus(LOAN_STATUS.PENDING);
         loanResponse.setMessage("Loan Application Submitted Successfully");
