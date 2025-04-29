@@ -27,13 +27,17 @@ public class LoanApplication {
     @Enumerated(EnumType.STRING)
     private LOAN_STATUS status;
 
-    private BigDecimal monthlyUpkeep;
+    @Column(nullable = false)
     private BigDecimal loanAmount;
+
+    @Column(nullable = false)
+    private BigDecimal monthlyUpkeep;
+
     private int LoanDurationMonths;
     private LocalDateTime applicationDate;
 
     @ManyToOne
-//    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id")
     private Student student;
 
     @OneToMany(mappedBy = "loanApplication", cascade = CascadeType.ALL)
@@ -43,6 +47,7 @@ public class LoanApplication {
     private Verification verification;
 
     @ManyToOne
+    @JoinColumn(name = "loan_policy_id", nullable = false)
     private LoanPolicy loanPolicy;
 
 

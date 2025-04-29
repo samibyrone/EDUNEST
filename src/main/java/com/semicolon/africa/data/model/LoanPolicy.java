@@ -24,6 +24,7 @@ public class LoanPolicy {
     private String policyDescription;
     private BigDecimal maxAmount;
     private BigDecimal minAmount;
+    private BigDecimal maxMonthlyUpkeep;
     private String eligibilityLevel;
     private boolean isActive;
     @ManyToMany

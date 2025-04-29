@@ -53,7 +53,7 @@ class LoanApplicationServiceImplementationTest {
         loanRequest = new LoanApplicationRequest();
         loanRequest.setStudentId(1L);
         loanRequest.setLoanAmount(BigDecimal.valueOf(150000));
-        loanRequest.setMonthlyUpkeep(BigDecimal.valueOf(15000));
+        loanRequest.setMonthlyUpkeep(BigDecimal.valueOf(20000));
         loanRequest.setLoanDurationMonths(48);
     }
 
@@ -62,6 +62,8 @@ class LoanApplicationServiceImplementationTest {
         LoanPolicy policy = LoanPolicy.builder()
                 .minAmount(BigDecimal.valueOf(50000))
                 .maxAmount(BigDecimal.valueOf(200000))
+                .maxMonthlyUpkeep(BigDecimal.valueOf(25000))
+                .isActive(true)
                 .build();
 
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));

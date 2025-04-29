@@ -55,25 +55,25 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
             throw new DuplicateApplicationException("Pending Application Already Exists!");
         }
 
-        validateLoanAmount(loanRequest.getLoanAmount(), loanRequest.getMonthlyUpkeep(), activeLoanPolicy);
+        validateLoanAmount(loanRequest, activeLoanPolicy);
 
         LoanApplication application = new LoanApplication();
             mapLoanApplication(loanRequest, application);
             application.setApplicationDate(LocalDateTime.now());
             application.setStudent(student);
             application.setStatus(LOAN_STATUS.PENDING);
-            application.setMonthlyUpkeep(BigDecimal.ZERO);
-            application.setLoanAmount(BigDecimal.ZERO);
+            application.setLoanPolicy(activeLoanPolicy);
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
         return mapLoanApplication(savedApplication);
     }
 
-    private void validateLoanAmount(BigDecimal loanAmount, BigDecimal monthlyUpkeep, LoanPolicy activeLoanPolicy) {
-        if (loanAmount.compareTo(activeLoanPolicy.getMinAmount()) < 0 || loanAmount.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+    private void validateLoanAmount(LoanApplicationRequest loanRequest, LoanPolicy activeLoanPolicy) {
+        if (loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMinAmount()) < 0  ||
+                loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMaxAmount()) > 0 ) {
             throw new InvalidLoanAmountException("Loan Amount Exceeded The Loan Policy Limits");
         }
-        if (monthlyUpkeep.compareTo(activeLoanPolicy.getMinAmount()) < 0 || monthlyUpkeep.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+        if (loanRequest.getMonthlyUpkeep().compareTo(activeLoanPolicy.getMaxMonthlyUpkeep()) > 0) {
             throw new InvalidMonthlyUpkeepAmountException("Monthly Upkeep Amount Exceeded The Loan Policy Limits");
         }
     }
