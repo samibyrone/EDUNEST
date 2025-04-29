@@ -44,9 +44,14 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
     }
 
     @Override
+    public List<LoanApplication> getAllLoanApplication() {
+        return loanApplicationRepository.findAll();
+    }
+
+    @Override
     public LoanApplicationResponse applyForLoan(LoanApplicationRequest loanRequest) {
         Student student = studentRepository.findById(loanRequest.getStudentId())
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                .orElseThrow( () -> new StudentNotFoundException("Student not found"));
 
         LoanPolicy activeLoanPolicy = loanPolicyRepository.findActivePolicy()
                 .orElseThrow( () -> new NoActivePolicyException("No Active Loan Policy"));
@@ -70,7 +75,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     private void validateLoanAmount(LoanApplicationRequest loanRequest, LoanPolicy activeLoanPolicy) {
         if (loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMinAmount()) < 0  ||
-                loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMaxAmount()) > 0 ) {
+                loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
             throw new InvalidLoanAmountException("Loan Amount Exceeded The Loan Policy Limits");
         }
         if (loanRequest.getMonthlyUpkeep().compareTo(activeLoanPolicy.getMaxMonthlyUpkeep()) > 0) {
@@ -122,5 +127,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         }
         return total;
     }
+
+
 }
 

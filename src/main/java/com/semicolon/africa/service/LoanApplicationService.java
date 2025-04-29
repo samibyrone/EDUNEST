@@ -22,4 +22,6 @@ public interface LoanApplicationService {
 //    LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest);
 
     double calculateLoanAmount(LoanApplication application, Verification verify );
+
+    List<LoanApplication> getAllLoanApplication();
 }

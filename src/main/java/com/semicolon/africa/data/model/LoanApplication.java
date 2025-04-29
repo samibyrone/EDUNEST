@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table()
+@Table(name = "loanApp")
 public class LoanApplication {
 
     @Id
@@ -33,11 +33,13 @@ public class LoanApplication {
     @Column(nullable = false)
     private BigDecimal monthlyUpkeep;
 
+    @Column(nullable = false)
     private int LoanDurationMonths;
+
     private LocalDateTime applicationDate;
 
     @ManyToOne
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
     @OneToMany(mappedBy = "loanApplication", cascade = CascadeType.ALL)

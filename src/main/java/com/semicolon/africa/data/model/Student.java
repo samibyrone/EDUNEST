@@ -23,10 +23,6 @@ import java.util.List;
 @Table(name = "users")
 public class Student implements UserDetails {
 
-//    @ManyToOne
-//    @JoinColumn(name = "student_id")
-//    private  Student student;
-
     @Id
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
