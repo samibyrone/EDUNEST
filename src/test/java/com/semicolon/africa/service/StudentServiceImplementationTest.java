@@ -7,6 +7,7 @@ import com.semicolon.africa.dtos.Request.StudentRegisterRequest;
 import com.semicolon.africa.dtos.Response.StudentLoginResponse;
 import com.semicolon.africa.dtos.Response.StudentRegisterResponse;
 import com.semicolon.africa.exception.EmailAlreadyExist;
+import com.semicolon.africa.exception.StudentNotFoundException;
 import com.semicolon.africa.exception.WrongEmailOrPassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

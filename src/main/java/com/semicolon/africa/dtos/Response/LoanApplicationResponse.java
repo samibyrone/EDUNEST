@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 public class LoanApplicationResponse {
 
     @Id
-    private long studentId;
-    private long loanApplicationId;
+    private Long studentId;
+    private Long loanApplicationId;
     private LOAN_STATUS status;
     private BigDecimal loanAmount;
     private BigDecimal monthlyUpkeep;

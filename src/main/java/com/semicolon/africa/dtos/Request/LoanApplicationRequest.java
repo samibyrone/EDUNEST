@@ -1,6 +1,6 @@
 package com.semicolon.africa.dtos.Request;
 
-import com.semicolon.africa.data.model.LOAN_STATUS;
+import com.semicolon.africa.data.model.Student;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -9,10 +9,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class LoanApplicationRequest {
-
-    @Id
-    private Long studentId;
     private Long LoanApplicationId;
+    private Long studentId;
     private BigDecimal loanAmount;
     private BigDecimal monthlyUpkeep;
     private int loanDurationMonths;

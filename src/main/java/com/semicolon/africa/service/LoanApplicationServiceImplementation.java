@@ -44,9 +44,18 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
     }
 
     @Override
+    public List<LoanApplication> getAllLoanApplication() {
+        return loanApplicationRepository.findAll();
+    }
+
+    @Override
     public LoanApplicationResponse applyForLoan(LoanApplicationRequest loanRequest) {
         Student student = studentRepository.findById(loanRequest.getStudentId())
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                .orElseThrow( () -> new StudentNotFoundException("Student not found"));
+
+        if (!student.isLoggedIn()) {
+            throw new InvalidStudentLoginInRequestException("Student In Not Logged In");
+        }
 
         LoanPolicy activeLoanPolicy = loanPolicyRepository.findActivePolicy()
                 .orElseThrow( () -> new NoActivePolicyException("No Active Loan Policy"));
@@ -55,72 +64,72 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
             throw new DuplicateApplicationException("Pending Application Already Exists!");
         }
 
-        validateLoanAmount(loanRequest.getLoanAmount(), loanRequest.getMonthlyUpkeep(), activeLoanPolicy);
+        validateLoanAmount(loanRequest, activeLoanPolicy);
 
         LoanApplication application = new LoanApplication();
-            mapLoanApplication(loanRequest, application);
-            application.setApplicationDate(LocalDateTime.now());
-            application.setStudent(student);
+            mapLoanApplication(loanRequest, application, student);
+            application.setLoanPolicy(activeLoanPolicy);
             application.setStatus(LOAN_STATUS.PENDING);
-            application.setMonthlyUpkeep(BigDecimal.ZERO);
-            application.setLoanAmount(BigDecimal.ZERO);
+            application.setApplicationDate(LocalDateTime.now());
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
         return mapLoanApplication(savedApplication);
     }
 
-    private void validateLoanAmount(BigDecimal loanAmount, BigDecimal monthlyUpkeep, LoanPolicy activeLoanPolicy) {
-        if (loanAmount.compareTo(activeLoanPolicy.getMinAmount()) < 0 || loanAmount.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+    private void validateLoanAmount(LoanApplicationRequest loanRequest, LoanPolicy activeLoanPolicy) {
+        if (loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMinAmount()) < 0  ||
+                loanRequest.getLoanAmount().compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
             throw new InvalidLoanAmountException("Loan Amount Exceeded The Loan Policy Limits");
         }
-        if (monthlyUpkeep.compareTo(activeLoanPolicy.getMinAmount()) < 0 || monthlyUpkeep.compareTo(activeLoanPolicy.getMaxAmount()) > 0) {
+        if (loanRequest.getMonthlyUpkeep().compareTo(activeLoanPolicy.getMaxMonthlyUpkeep()) > 0) {
             throw new InvalidMonthlyUpkeepAmountException("Monthly Upkeep Amount Exceeded The Loan Policy Limits");
         }
     }
+//
+//    @Override
+//    @Transactional
+//    public LoanApplicationResponse updateLoanStatus(Long loanApplicationId, Verification verification) {
+//        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
+//                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
+//
+//
+//        if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
+//            BigDecimal totalAmount = calculateLoanAmount(application, verification);
+//            application.setStatus(LOAN_STATUS.APPROVED);
+//                application.setLoanAmount(BigDecimal.valueOf(totalAmount));
+//                application.setMonthlyUpkeep(BigDecimal.valueOf(verification.getVerifiedMonthlyUpkeep()));
+//            } else  {
+//                application.setStatus(LOAN_STATUS.REJECTED);
+//            }
+//        LoanApplication updatedApplication = loanApplicationRepository.save(application);
+//        return mapLoanApplication(updatedApplication);
+//    }
+//
+////
+////    @Override
+////    public BigDecimal calculateLoanAmount(LoanApplication application, Verification verify) {
+////       BigDecimal schoolFees = BigDecimal.valueOf(verify.getVerifiedSchoolFees());
+////       BigDecimal monthlyUpkeep = BigDecimal.valueOf(verify.getVerifiedMonthlyUpkeep());
+//       int monthDurations = application.getLoanDurationMonths();
+//
+//       BigDecimal total = schoolFees + monthlyUpkeep * monthDurations;
+//
+//       LoanPolicy policy = loanPolicyRepository.findActivePolicy()
+//               .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
+//
+//       BigDecimal totalLoan = BigDecimal.valueOf(total);
+//       BigDecimal minAmount = policy.getMinAmount();
+//       BigDecimal maxAmount = policy.getMaxAmount();
+//
+//        if(totalLoan.compareTo(minAmount) < 0) {
+//            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
+//        }
+//
+//        if (totalLoan.compareTo(maxAmount) < 0) {
+//            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
+//        }
+//        return total;
+//    }
 
-    @Override
-    @Transactional
-    public LoanApplicationResponse updateLoanStatus(Long loanApplicationId, Verification verification) {
-        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
-                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
-
-        double totalAmount = calculateLoanAmount(application, verification);
-
-            if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
-                application.setStatus(LOAN_STATUS.APPROVED);
-                application.setLoanAmount(BigDecimal.valueOf(totalAmount));
-                application.setMonthlyUpkeep(BigDecimal.valueOf(verification.getVerifiedMonthlyUpkeep()));
-            } else  {
-                application.setStatus(LOAN_STATUS.REJECTED);
-            }
-        LoanApplication updatedApplication = loanApplicationRepository.save(application);
-        return mapLoanApplication(updatedApplication);
-    }
-
-
-    @Override
-    public double calculateLoanAmount(LoanApplication application, Verification verify) {
-       double schoolFees = verify.getVerifiedSchoolFees();
-       double monthlyUpkeep = verify.getVerifiedMonthlyUpkeep();
-       int monthDurations = application.getLoanDurationMonths();
-
-       double total = schoolFees + monthlyUpkeep * monthDurations;
-
-       LoanPolicy policy = loanPolicyRepository.findActivePolicy()
-               .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
-
-       BigDecimal totalLoan = BigDecimal.valueOf(total);
-       BigDecimal minAmount = policy.getMinAmount();
-       BigDecimal maxAmount = policy.getMaxAmount();
-
-        if(totalLoan.compareTo(minAmount) < 0) {
-            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
-        }
-
-        if (totalLoan.compareTo(maxAmount) < 0) {
-            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
-        }
-        return total;
-    }
 }
 
