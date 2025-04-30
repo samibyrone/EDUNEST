@@ -115,6 +115,7 @@
             <artifactId>spring-security-oauth2-client</artifactId>
             <version>6.4.4</version>
         </dependency>
+
     </dependencies>
 
 </project>

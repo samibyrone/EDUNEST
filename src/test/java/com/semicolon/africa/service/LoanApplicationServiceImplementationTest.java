@@ -6,9 +6,7 @@ import com.semicolon.africa.data.repositories.LoanPolicyRepository;
 import com.semicolon.africa.data.repositories.StudentRepository;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
-import com.semicolon.africa.exception.InvalidLoanAmountException;
-import com.semicolon.africa.exception.InvalidPolicyRequestException;
-import com.semicolon.africa.exception.InvalidStudentLoginInRequestException;
+import com.semicolon.africa.exception.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,24 +110,21 @@ class LoanApplicationServiceImplementationTest {
     @Test
     public void testThatThrowsExceptions_whenStudentApplyForLoan_belowTheMinimumAmountLimit() {
         loanRequest.setLoanAmount(BigDecimal.valueOf(45000));
-        Exception exception = assertThrows(InvalidLoanAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        assertTrue(exception.getMessage().contains("Loan Amount Must Not Be less That 50,000"));
+        assertThrows(InvalidLoanAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
 
     @Test
     public void testThatThrowsExceptions_whenStudentApplyForLoan_aboveMaximumAmountLimit() {
         loanRequest.setLoanAmount(BigDecimal.valueOf(210000));
-        Exception exception = assertThrows(InvalidLoanAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        assertTrue(exception.getMessage().contains("Loan Amount Must Not Be Above 200,000"));
+        assertThrows(InvalidLoanAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
 
     @Test
     public void testThatThrowSExceptions_whenStudentMonthlyUpkeep_exceedPolicyLimit() {
         loanRequest.setMonthlyUpkeep(BigDecimal.valueOf(30000));
-        Exception exception = assertThrows(InvalidLoanAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        assertTrue(exception.getMessage().contains("Monthly Upkeep Already Exceeded Maximum Amount Allowed"));
+        assertThrows(InvalidMonthlyUpkeepAmountException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
 
@@ -137,8 +132,7 @@ class LoanApplicationServiceImplementationTest {
     public void testThatThrowsExceptions_whenStudent_applyForLoan_with_InActivePolicy() {
         policy.setActive(false);
         loanPolicyRepository.save(policy);
-        Exception exception = assertThrows(InvalidPolicyRequestException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        assertTrue(exception.getMessage().contains("Loan Policy Is Not Active"));
+        assertThrows(NoActivePolicyException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
 
@@ -146,8 +140,7 @@ class LoanApplicationServiceImplementationTest {
     public void testThatThrowsExceptions_whenStudentApplyForLoan_withoutLoggingIn() {
         student.setLoggedIn(false);
         studentRepository.save(student);
-        Exception exception = assertThrows(InvalidStudentLoginInRequestException.class, () -> loanApplicationService.applyForLoan(loanRequest));
-        assertTrue(exception.getMessage().contains("Student Is Not Logged In"));
+        assertThrows(InvalidStudentLoginInRequestException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
 }

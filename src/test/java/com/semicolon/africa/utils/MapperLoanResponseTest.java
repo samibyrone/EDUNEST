@@ -3,7 +3,6 @@ package com.semicolon.africa.utils;
 import com.semicolon.africa.data.model.LOAN_STATUS;
 import com.semicolon.africa.data.model.LoanApplication;
 import com.semicolon.africa.data.model.Student;
-import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ public class MapperLoanResponseTest {
 
     private static LoanApplication loanApplication;
     private static Student student;
-    private static LoanApplicationRequest loanRequest;
 
     @BeforeAll
     public static void setup() {
