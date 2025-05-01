@@ -3,7 +3,9 @@ package com.semicolon.africa.service;
 import com.semicolon.africa.data.model.LoanApplication;
 import com.semicolon.africa.data.model.Verification;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
+import com.semicolon.africa.dtos.Request.LoanApplicationUpdateRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.dtos.Response.LoanApplicationUpdateResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,10 +21,9 @@ public interface LoanApplicationService {
 
     Optional<LoanApplication> getLoanApplicationById(Long loanApplicationId);
 
-//    LoanApplicationResponse updateLoanStatus(Long loanApplicationId, Verification verification);
-//    LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest);
+    LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest);
 
-//    BigDecimal calculateLoanAmount(LoanApplication application, Verification verify );
+    BigDecimal calculateLoanAmount(LoanApplication application, Verification verify );
 
     List<LoanApplication> getAllLoanApplication();
 }

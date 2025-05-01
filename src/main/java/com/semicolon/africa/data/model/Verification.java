@@ -19,9 +19,6 @@ public class Verification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double VerifiedSchoolFees;
-    private double verifiedMonthlyUpkeep;
-
     @Enumerated(EnumType.STRING)
     private VERIFICATION_STATUS status;
 

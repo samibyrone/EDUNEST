@@ -5,8 +5,11 @@ import com.semicolon.africa.data.repositories.LoanApplicationRepository;
 import com.semicolon.africa.data.repositories.LoanPolicyRepository;
 import com.semicolon.africa.data.repositories.StudentRepository;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
+import com.semicolon.africa.dtos.Request.LoanApplicationUpdateRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.dtos.Response.LoanApplicationUpdateResponse;
 import com.semicolon.africa.exception.*;
+import com.semicolon.africa.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private Mapper mapper;
 
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
@@ -73,7 +79,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
             application.setApplicationDate(LocalDateTime.now());
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
-        return mapLoanApplication(savedApplication);
+        return mapper.mapLoanApplication(savedApplication);
     }
 
     private void validateLoanAmount(LoanApplicationRequest loanRequest, LoanPolicy activeLoanPolicy) {
@@ -85,51 +91,50 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
             throw new InvalidMonthlyUpkeepAmountException("Monthly Upkeep Amount Exceeded The Loan Policy Limits");
         }
     }
-//
-//    @Override
-//    @Transactional
-//    public LoanApplicationResponse updateLoanStatus(Long loanApplicationId, Verification verification) {
-//        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
-//                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
-//
-//
-//        if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
-//            BigDecimal totalAmount = calculateLoanAmount(application, verification);
-//            application.setStatus(LOAN_STATUS.APPROVED);
-//                application.setLoanAmount(BigDecimal.valueOf(totalAmount));
-//                application.setMonthlyUpkeep(BigDecimal.valueOf(verification.getVerifiedMonthlyUpkeep()));
-//            } else  {
-//                application.setStatus(LOAN_STATUS.REJECTED);
-//            }
-//        LoanApplication updatedApplication = loanApplicationRepository.save(application);
-//        return mapLoanApplication(updatedApplication);
-//    }
-//
-////
-////    @Override
-////    public BigDecimal calculateLoanAmount(LoanApplication application, Verification verify) {
-////       BigDecimal schoolFees = BigDecimal.valueOf(verify.getVerifiedSchoolFees());
-////       BigDecimal monthlyUpkeep = BigDecimal.valueOf(verify.getVerifiedMonthlyUpkeep());
-//       int monthDurations = application.getLoanDurationMonths();
-//
-//       BigDecimal total = schoolFees + monthlyUpkeep * monthDurations;
-//
-//       LoanPolicy policy = loanPolicyRepository.findActivePolicy()
-//               .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
-//
-//       BigDecimal totalLoan = BigDecimal.valueOf(total);
-//       BigDecimal minAmount = policy.getMinAmount();
-//       BigDecimal maxAmount = policy.getMaxAmount();
-//
-//        if(totalLoan.compareTo(minAmount) < 0) {
-//            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
-//        }
-//
-//        if (totalLoan.compareTo(maxAmount) < 0) {
-//            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
-//        }
-//        return total;
-//    }
+
+    @Override
+    @Transactional
+    public LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest, Verification verification) {
+        LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
+                .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
+
+
+        if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
+            BigDecimal totalAmount = calculateLoanAmount(application, verification);
+            application.setStatus(LOAN_STATUS.APPROVED);
+            application.
+        } else  {
+            application.setStatus(LOAN_STATUS.REJECTED);
+        }
+        LoanApplication updatedApplication = loanApplicationRepository.save(application);
+        return mapLoanApplication(updatedApplication);
+    }
+
+
+    @Override
+    public BigDecimal calculateLoanAmount(LoanApplication application, Verification verify) {
+       BigDecimal schoolFees = BigDecimal.valueOf(verify.getVerifiedSchoolFees());
+       BigDecimal monthlyUpkeep = BigDecimal.valueOf(verify.getVerifiedMonthlyUpkeep());
+       int monthDurations = application.getLoanDurationMonths();
+
+       BigDecimal total = schoolFees + monthlyUpkeep * monthDurations;
+
+       LoanPolicy policy = loanPolicyRepository.findActivePolicy()
+               .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));
+
+       BigDecimal totalLoan = BigDecimal.valueOf(total);
+       BigDecimal minAmount = policy.getMinAmount();
+       BigDecimal maxAmount = policy.getMaxAmount();
+
+        if(totalLoan.compareTo(minAmount) < 0) {
+            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMinAmount() + ")");
+        }
+
+        if (totalLoan.compareTo(maxAmount) < 0) {
+            throw new LoanAmountException("Total amount (" + total + ") is below the minimum allowed (" + policy.getMaxAmount() + ")");
+        }
+        return total;
+    }
 
 }
 

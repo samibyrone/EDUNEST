@@ -16,6 +16,7 @@ public class MapperLoanResponseTest {
 
     private static LoanApplication loanApplication;
     private static Student student;
+    private Mapper mapper;
 
     @BeforeAll
     public static void setup() {
@@ -28,7 +29,7 @@ public class MapperLoanResponseTest {
 
     @Test
     public void mapLoanApplicationToStudentResponseTest() {
-        LoanApplicationResponse loanResponse = Mapper.mapLoanApplication(loanApplication);
+        LoanApplicationResponse loanResponse = mapper.mapLoanApplication(loanApplication);
 
         assertNotNull(loanResponse);
         assertEquals(1234L, loanResponse.getStudentId());

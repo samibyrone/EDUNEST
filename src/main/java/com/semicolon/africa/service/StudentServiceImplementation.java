@@ -65,7 +65,7 @@ public class StudentServiceImplementation implements StudentService {
     }
 
     @Override
-    public Optional<Student> getUserById(Long id) {
+    public Optional<Student> getStudentById(Long id) {
         return studentRepository.findById(id);
     }
 
