@@ -67,7 +67,7 @@ public class Mapper {
         loanApplication.setStudent(student);
     }
 
-    public static LoanApplicationResponse mapLoanApplication(LoanApplication loanApplication) {
+    public LoanApplicationResponse mapLoanApplication(LoanApplication loanApplication) {
         LoanApplicationResponse loanResponse = new LoanApplicationResponse();
         loanResponse.setLoanApplicationId(loanApplication.getId());
         loanResponse.setStudentId(loanApplication.getStudent().getId());

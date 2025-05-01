@@ -7,12 +7,11 @@ import com.semicolon.africa.data.repositories.StudentRepository;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
 import com.semicolon.africa.exception.*;
+import com.semicolon.africa.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +24,9 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private Mapper mapper;
 
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
@@ -73,7 +75,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
             application.setApplicationDate(LocalDateTime.now());
 
         LoanApplication savedApplication = loanApplicationRepository.save(application);
-        return mapLoanApplication(savedApplication);
+        return mapper.mapLoanApplication(savedApplication);
     }
 
     private void validateLoanAmount(LoanApplicationRequest loanRequest, LoanPolicy activeLoanPolicy) {
