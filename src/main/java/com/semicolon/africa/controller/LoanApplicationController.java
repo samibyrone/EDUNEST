@@ -27,6 +27,11 @@ public class LoanApplicationController {
     @Autowired
     private Mapper mapper;
 
+    @Autowired
+    public LoanApplicationController(LoanApplicationService loanApplicationService) {
+        this.loanApplicationService = loanApplicationService;
+    }
+
     @PostMapping("/apply4Loan")
     @ManagedOperation(description = "Submit a New Loan Application")
     public ResponseEntity<LoanApplicationResponse> applyForLoan(@RequestBody LoanApplicationRequest loanApplicationRequest) {

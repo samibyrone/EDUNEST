@@ -3,10 +3,13 @@ package com.semicolon.africa.utils;
 import com.semicolon.africa.data.model.LOAN_STATUS;
 import com.semicolon.africa.data.model.LoanApplication;
 import com.semicolon.africa.data.model.Student;
+import com.semicolon.africa.data.model.Verification;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
+import com.semicolon.africa.dtos.Request.LoanApplicationUpdateRequest;
 import com.semicolon.africa.dtos.Request.StudentLoginRequest;
 import com.semicolon.africa.dtos.Request.StudentRegisterRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.dtos.Response.LoanApplicationUpdateResponse;
 import com.semicolon.africa.dtos.Response.StudentLoginResponse;
 import com.semicolon.africa.dtos.Response.StudentRegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +77,24 @@ public class Mapper {
         loanResponse.setStatus(LOAN_STATUS.PENDING);
         loanResponse.setMessage("Loan Application Submitted Successfully");
         return loanResponse;
+    }
+
+    public static void mapLoanApplicationUpdate(LoanApplicationUpdateRequest loanApplicationUpdate, LoanApplication loanApplication, Verification verification) {
+        loanApplication.setLoanAmount(loanApplicationUpdate.getLoanAmount());
+        loanApplication.setMonthlyUpkeep(loanApplicationUpdate.getMonthlyUpkeep());
+        loanApplication.setLoanDurationMonths(loanApplicationUpdate.getLoanDurationMonths());
+        loanApplication.setApplicationDate(loanApplicationUpdate.getApplicationDate());
+        loanApplication.setApplicationDate(LocalDateTime.now());
+        loanApplication.setStatus(LOAN_STATUS.APPROVED);
+        loanApplication.setVerification(verification);
+    }
+
+    public static LoanApplicationUpdateResponse mapLoanApplicationUpdate(LoanApplication loanApplication) {
+        LoanApplicationUpdateResponse loanAppUpdate = new LoanApplicationUpdateResponse();
+        loanAppUpdate.setLoanApplicationId(loanApplication.getId());
+        loanAppUpdate.setStudentId(loanApplication.getStudent().getId());
+        loanAppUpdate.setStatus(LOAN_STATUS.APPROVED);
+        loanAppUpdate.setMessage("Loan Application Approved Successfully");
+        return loanAppUpdate;
     }
 }
