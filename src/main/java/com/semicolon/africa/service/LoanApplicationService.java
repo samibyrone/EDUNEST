@@ -15,15 +15,15 @@ import java.util.Optional;
 @Service
 public interface LoanApplicationService {
 
-    LoanApplicationResponse applyForLoan(LoanApplicationRequest loanApplicationRequest);
+    List<LoanApplication> getAllLoanApplication();
 
     List<LoanApplication> getStudentApplications(Long studentId);
 
     Optional<LoanApplication> getLoanApplicationById(Long loanApplicationId);
 
-    LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest);
+    LoanApplicationResponse applyForLoan(LoanApplicationRequest loanApplicationRequest);
 
     BigDecimal calculateLoanAmount(LoanApplication application, Verification verify );
 
-    List<LoanApplication> getAllLoanApplication();
+    LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest);
 }
