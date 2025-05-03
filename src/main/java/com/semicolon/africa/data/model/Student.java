@@ -39,12 +39,8 @@ public class Student implements UserDetails {
     @Enumerated(EnumType.STRING)
     private STUDENT_TYPE role;
 
-//    @OneToMany()
-//    private List<LoanApplication> loanApplications;
-//
-//    public Student(Student student) {
-//        this.student = student;
-//    }
+    @OneToMany()
+    private List<Document> documents;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

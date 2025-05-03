@@ -3,14 +3,13 @@
     import jakarta.persistence.*;
     import jakarta.persistence.GeneratedValue;
     import lombok.*;
-    import lombok.experimental.SuperBuilder;
     import org.springframework.data.annotation.Id;
 
 
     @EqualsAndHashCode(callSuper = true)
     @Data
     @Entity
-    @SuperBuilder
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @Table
@@ -18,7 +17,7 @@
 
         @Id
         @jakarta.persistence.Id
-        @GeneratedValue
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long Id;
         private String firstName;
         private String lastName;

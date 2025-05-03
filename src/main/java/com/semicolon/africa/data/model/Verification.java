@@ -25,7 +25,7 @@ public class Verification {
     private LocalDateTime verifiedDate;
 
     @OneToOne
-//    @JoinColumn(name = "admin_id")
+    @JoinColumn(name = "admin_id")
     private LoanApplication loanApplication;
 
 //    @ManyToOne

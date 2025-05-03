@@ -4,6 +4,7 @@ import com.semicolon.africa.data.model.*;
 import com.semicolon.africa.data.repositories.LoanApplicationRepository;
 import com.semicolon.africa.data.repositories.LoanPolicyRepository;
 import com.semicolon.africa.data.repositories.StudentRepository;
+import com.semicolon.africa.data.repositories.VerificationRepository;
 import com.semicolon.africa.dtos.Request.LoanApplicationRequest;
 import com.semicolon.africa.dtos.Request.LoanApplicationUpdateRequest;
 import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.semicolon.africa.utils.Mapper.mapLoanApplication;
+import static com.semicolon.africa.utils.Mapper.mapLoanApplicationUpdate;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Autowired
     private LoanPolicyRepository loanPolicyRepository;
+    private VerificationRepository verificationRepository;
 
 
     @Override
@@ -94,20 +97,21 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Override
     @Transactional
-    public LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest, Verification verification) {
+    public LoanApplicationUpdateResponse updateLoanStatus(Long loanApplicationId, LoanApplicationUpdateRequest loanApplicationUpdateRequest) {
         LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
                 .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
 
+        Verification verify = verificationRepository.
 
-        if (verification.getStatus() == VERIFICATION_STATUS.VERIFIED) {
-            BigDecimal totalAmount = calculateLoanAmount(application, verification);
+        if (verify.getStatus() == VERIFICATION_STATUS.VERIFIED) {
+            BigDecimal totalAmount = calculateLoanAmount();
+            application.setLoanAmount(totalAmount);
             application.setStatus(LOAN_STATUS.APPROVED);
-            application.
         } else  {
             application.setStatus(LOAN_STATUS.REJECTED);
         }
         LoanApplication updatedApplication = loanApplicationRepository.save(application);
-        return mapLoanApplication(updatedApplication);
+        return mapLoanApplicationUpdate(updatedApplication);
     }
 
 
