@@ -1,0 +1,21 @@
+package com.semicolon.africa.service;
+
+import com.semicolon.africa.data.model.Document;
+import com.semicolon.africa.data.model.LoanApplication;
+import com.semicolon.africa.data.model.Student;
+import com.semicolon.africa.data.model.Verification;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public interface VerificationService {
+
+    Verification performFullverification(LoanApplication loanApplication, List<Document> documents);
+
+    Verification verifyEnrolment(Student student);
+
+    Verification validateDocument(Document document);
+
+    Verification callExternalSchoolAPI(Student student, Document document);
+}
