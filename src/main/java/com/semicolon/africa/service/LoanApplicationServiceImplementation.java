@@ -117,11 +117,11 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Override
     public BigDecimal calculateLoanAmount(LoanApplication application, Verification verify) {
-       BigDecimal schoolFees = BigDecimal.valueOf(verify.getVerifiedSchoolFees());
-       BigDecimal monthlyUpkeep = BigDecimal.valueOf(verify.getVerifiedMonthlyUpkeep());
+       BigDecimal schoolFees = application.getLoanAmount();
+       BigDecimal monthlyUpkeep = application.getMonthlyUpkeep();
        int monthDurations = application.getLoanDurationMonths();
 
-       BigDecimal total = schoolFees + monthlyUpkeep * monthDurations;
+       double total = schoolFees + monthlyUpkeep * monthDurations;
 
        LoanPolicy policy = loanPolicyRepository.findActivePolicy()
                .orElseThrow( () -> new PolicyNotFoundException("Active Loan Policy Not Found"));

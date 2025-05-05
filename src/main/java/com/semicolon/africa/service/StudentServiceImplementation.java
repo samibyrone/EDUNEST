@@ -69,14 +69,6 @@ public class StudentServiceImplementation implements StudentService {
         return studentRepository.findById(id);
     }
 
-    public String verifyStudent(StudentRegisterRequest userRegister) {
-        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userRegister.getUserName(), userRegister.getPassword()));
-            if(authentication.isAuthenticated())
-                return jwtService.generateToken((UserDetails) studentRepository);
-
-            return "Failed";
-    }
-
     @Override
     public StudentLoginResponse loginStudent(StudentLoginRequest userLogin) {
         Student student = findByEmail(userLogin.getEmail());
@@ -85,6 +77,13 @@ public class StudentServiceImplementation implements StudentService {
         student.setLoggedIn(true);
         studentRepository.save(student);
         return mapStudentLogin(student);
+    }
+
+    public String verifyStudent(StudentRegisterRequest userRegister) {
+        Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(userRegister.getUserName(), userRegister.getPassword()));
+        if(authentication.isAuthenticated())
+            return jwtService.generateToken((UserDetails) studentRepository);
+        return "Failed";
     }
 
     @Override
