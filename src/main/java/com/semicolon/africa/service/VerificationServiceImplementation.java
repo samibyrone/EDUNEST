@@ -12,6 +12,10 @@ import java.util.List;
 public class VerificationServiceImplementation implements VerificationService {
 
 
+
+    @Override
+    public
+
     @Override
     public Verification performFullverification(LoanApplication loanApplication, List<Document> documents) {
         return null;

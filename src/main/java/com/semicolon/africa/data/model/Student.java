@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,20 +28,36 @@ public class Student implements UserDetails {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String userName;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(unique = true, nullable = false)
     private String phoneNumber;
+
+    @Column(nullable = false)
     private String address;
+
+    @Column(nullable = false)
     private boolean isLoggedIn;
 
     @Enumerated(EnumType.STRING)
     private STUDENT_TYPE role;
 
-    @OneToMany()
-    private List<Document> documents;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<LoanApplication> loanApplications = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
