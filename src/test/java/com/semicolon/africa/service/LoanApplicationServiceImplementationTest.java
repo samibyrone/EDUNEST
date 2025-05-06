@@ -143,4 +143,14 @@ class LoanApplicationServiceImplementationTest {
         assertThrows(InvalidStudentLoginInRequestException.class, () -> loanApplicationService.applyForLoan(loanRequest));
         assertThat(loanApplicationService.getAllLoanApplication().size()).isEqualTo(0);
     }
+
+    @Test
+    public void testThatStudent_loanApplicationCanBeUpdatedSuccessfully() {
+
+    }
+
+    @Test
+    public void testThatCalculate_studentLoanApplication_withMonthlyUpkeep() {
+
+    }
 }

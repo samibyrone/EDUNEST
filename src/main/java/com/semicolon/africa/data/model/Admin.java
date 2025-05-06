@@ -6,25 +6,31 @@
     import org.springframework.data.annotation.Id;
 
 
-    @EqualsAndHashCode(callSuper = true)
     @Data
     @Entity
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     @Table
-    public class Admin extends Student{
+    public class Admin {
 
         @Id
         @jakarta.persistence.Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long Id;
-        private String firstName;
-        private String lastName;
+
+        @Column(unique = true, nullable = false)
         private String userName;
+
+        @Column(nullable = false)
         private String password;
+
+        @Column(unique = true, nullable = false)
         private String email;
+
+        @Column(unique = true, nullable = false)
         private String phoneNumber;
-        private String address;
+
+        @Column(nullable = false)
         private boolean isLoggedIn;
     }
