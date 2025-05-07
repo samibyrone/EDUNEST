@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,6 +28,10 @@ public class Verification {
     @OneToOne
     @JoinColumn(name = "admin_id")
     private LoanApplication loanApplication;
+
+    public BigDecimal getVerifiedSchoolFees;
+
+    public BigDecimal getVerifiedMonthlyUpkeep;
 
 //    @ManyToOne
 //    private User admin;

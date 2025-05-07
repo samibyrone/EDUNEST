@@ -2,6 +2,9 @@ package com.semicolon.africa.service;
 
 import com.semicolon.africa.data.model.Admin;
 import com.semicolon.africa.data.model.LoanApplication;
+import com.semicolon.africa.data.model.Verification;
+import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.dtos.Response.LoanApplicationUpdateResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,5 +19,7 @@ public interface AdminService {
 
     Optional<Admin> findByUserName(String userName);
 
-    LoanApplication approveLoan(Long LoanId, Admin admin);
+    LoanApplicationResponse approveLoan(Long LoanApplicationId, Verification verification);
+
+    LoanApplicationUpdateResponse rejectLoan(LoanApplication loanApplication);
 }

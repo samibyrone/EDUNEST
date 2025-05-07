@@ -1,14 +1,19 @@
 package com.semicolon.africa.service;
 
-import com.semicolon.africa.data.model.Admin;
-import com.semicolon.africa.data.model.LOAN_STATUS;
-import com.semicolon.africa.data.model.LoanApplication;
+import com.semicolon.africa.data.model.*;
 import com.semicolon.africa.data.repositories.AdminRepository;
 import com.semicolon.africa.data.repositories.LoanApplicationRepository;
+import com.semicolon.africa.data.repositories.LoanPolicyRepository;
+import com.semicolon.africa.dtos.Response.LoanApplicationResponse;
+import com.semicolon.africa.dtos.Response.LoanApplicationUpdateResponse;
+import com.semicolon.africa.exception.LoanAmountException;
+import com.semicolon.africa.exception.PolicyNotFoundException;
+import com.semicolon.africa.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +25,16 @@ public class AdminServiceImplementation implements AdminService {
     private AdminRepository adminRepository;
 
     @Autowired
+    private Mapper mapper;
+
+    @Autowired
     private LoanApplicationRepository loanApplicationRepository;
+
+    @Autowired
+    private LoanPolicyRepository loanPolicyRepository;
+
+    @Autowired
+    private VerificationService verification;
 
     @Override
     public List<Admin> getAllUsers() {
@@ -38,16 +52,40 @@ public class AdminServiceImplementation implements AdminService {
     }
 
     @Override
-    public LoanApplication approveLoan(Long LoanId, Admin admin) {
-        LoanApplication loanApplication = loanApplicationRepository.findById(LoanId)
-                .orElseThrow( () -> new RuntimeException("LoanApplication not found"));
+    public LoanApplicationResponse approveLoan(Long LoanApplicationId, Verification verification) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(LoanApplicationId)
+                .orElseThrow(() -> new RuntimeException("LoanApplication not found"));
 
-        admin
+        BigDecimal total = null;
+        BigDecimal upkeep = null;
+        if (verification.getStatus() != VERIFICATION_STATUS.VERIFIED) {
+            loanApplication.setStatus(LOAN_STATUS.REJECTED);
+        } else {
+            BigDecimal schoolFees = BigDecimal.valueOf(verification.getVerifiedSchoolFees());
+            upkeep = BigDecimal.valueOf(verification.getVerifiedMonthlyUpkeep());
+            int duration = loanApplication.getLoanDurationMonths();
+
+            total = schoolFees.add(upkeep.multiply(BigDecimal.valueOf(duration)));
+
+            LoanPolicy policy = loanPolicyRepository.findActivePolicy()
+                    .orElseThrow(() -> new PolicyNotFoundException("Loan Policy not found"));
+
+            if (total.compareTo(policy.getMinAmount()) < 0 || total.compareTo(policy.getMaxAmount()) > 0) {
+                throw new LoanAmountException("Loan");
+            }
+        }
+
+        loanApplication.setLoanAmount(total);
+        loanApplication.setMonthlyUpkeep(upkeep);
         loanApplication.setStatus(LOAN_STATUS.APPROVED);
+
+        return mapper.mapLoanApplication(loanApplicationRepository.save(loanApplication));
     }
 
     @Override
-    public void rejectLoan(LoanApplication loanApplication) {
+    public LoanApplicationUpdateResponse rejectLoan(LoanApplication loanApplication) {
         loanApplication.setStatus(LOAN_STATUS.REJECTED);
+
+        return null;
     }
 }
