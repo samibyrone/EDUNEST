@@ -15,7 +15,7 @@ public interface VerificationService {
 
     Verification verifyEnrolment(Student student);
 
-    Verification validateDocument(Document document);
+    Boolean validateDocument(LoanApplication loanApplication);
 
     Verification callExternalSchoolAPI(Student student, Document document);
 }

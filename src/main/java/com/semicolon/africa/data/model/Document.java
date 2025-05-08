@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "documents")
 public class Document {
 
     @Id
@@ -20,14 +21,16 @@ public class Document {
     private Long id;
 
     private String documentName;
+    private Boolean isDocumentValid;
     private String filePath;
 
     @Enumerated(EnumType.STRING)
     private DOCUMENT_TYPE docType;
 
     @ManyToOne
-    @JoinColumn(name = "loan_application_id")
-    private LoanApplication loanApplication;
+    @JoinColumn(name = "student_id")
+    private Student student;
 
-
+    public boolean validateFormat() {
+    }
 }

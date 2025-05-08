@@ -1,20 +1,22 @@
 package com.semicolon.africa.service;
 
-import com.semicolon.africa.data.model.Document;
-import com.semicolon.africa.data.model.LoanApplication;
-import com.semicolon.africa.data.model.Student;
-import com.semicolon.africa.data.model.Verification;
+import com.semicolon.africa.data.model.*;
+import com.semicolon.africa.data.repositories.DocumentRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class VerificationServiceImplementation implements VerificationService {
 
+    @Autowired
+    private DocumentRepository documentRepository;
 
-
-    @Override
-    public
+    @Autowired
+    private ExternalSchoolAPI externalSchoolAPI;
 
     @Override
     public Verification performFullverification(LoanApplication loanApplication, List<Document> documents) {
@@ -23,12 +25,18 @@ public class VerificationServiceImplementation implements VerificationService {
 
     @Override
     public Verification verifyEnrolment(Student student) {
-        return null;
+        return externalSchoolAPI.callSchoolEnrollmentAPI(student.getId());
     }
 
     @Override
-    public Verification validateDocument(Document document) {
-        return null;
+    public Boolean validateDocument(LoanApplication loanApplication) {
+        return loanApplication.getDocuments().stream()
+                .allMatch(document -> {
+                    boolean isDocValid = document.validateFormat();
+                            document.setIsDocumentValid(isDocValid);
+                            documentRepository.save(document);
+                            return isDocValid;
+                });
     }
 
     @Override
