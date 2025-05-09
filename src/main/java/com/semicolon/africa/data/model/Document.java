@@ -31,6 +31,7 @@ public class Document {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    public boolean validateFormat() {
-    }
+//    public boolean validateFormat() {
+//        return false;
+//    }
 }

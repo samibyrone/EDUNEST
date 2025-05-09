@@ -17,6 +17,8 @@ public class VerificationServiceImplementation implements VerificationService {
 
     @Autowired
     private ExternalSchoolAPI externalSchoolAPI;
+    @Autowired
+    private DocumentServiceImplementation documentServiceImplementation;
 
     @Override
     public Verification performFullverification(LoanApplication loanApplication, List<Document> documents) {
@@ -37,6 +39,12 @@ public class VerificationServiceImplementation implements VerificationService {
                             documentRepository.save(document);
                             return isDocValid;
                 });
+    }
+
+    private boolean verifyStudent(Student student, Document document) {
+        boolean isDocumentValid = documentServiceImplementation.validateFormat(document);
+        boolean isEnrollmentValid = externalSchoolAPI.verifyStudentEnrollment(student.getId(), student.getSchool());
+        return isDocumentValid && isEnrollmentValid;
     }
 
     @Override
