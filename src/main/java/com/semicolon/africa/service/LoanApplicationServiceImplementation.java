@@ -39,7 +39,12 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
 
     @Autowired
     private LoanPolicyRepository loanPolicyRepository;
-    private VerificationRepository verificationRepository;
+
+    @Autowired
+    private VerificationService verificationService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @Override
@@ -101,7 +106,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
                 .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
 
-        Verification verify = verificationRepository.
+        Verification verify = verificationService.verifyEnrolment(application);
 
         if (verify.getStatus() == VERIFICATION_STATUS.VERIFIED) {
             BigDecimal totalAmount = calculateLoanAmount();

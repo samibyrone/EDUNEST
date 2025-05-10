@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "loan_policy")
 public class LoanPolicy {
 
     @Id
@@ -27,6 +28,7 @@ public class LoanPolicy {
     private BigDecimal maxMonthlyUpkeep;
     private String eligibilityLevel;
     private boolean isActive;
+
     @ManyToMany
     private List<LoanApplication> loanApplications;
 
