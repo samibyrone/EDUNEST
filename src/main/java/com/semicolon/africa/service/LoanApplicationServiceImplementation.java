@@ -106,7 +106,7 @@ public class LoanApplicationServiceImplementation implements LoanApplicationServ
         LoanApplication application = loanApplicationRepository.findById(loanApplicationId)
                 .orElseThrow( () -> new LoanApplicationNotFoundException("Loan Application Not Found"));
 
-        Verification verify = verificationService.verifyEnrolment(application);
+        Verification verify = verificationService.verifyEnrolment(student);
 
         if (verify.getStatus() == VERIFICATION_STATUS.VERIFIED) {
             BigDecimal totalAmount = calculateLoanAmount();
