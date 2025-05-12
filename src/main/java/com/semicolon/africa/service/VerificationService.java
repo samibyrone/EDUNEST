@@ -7,13 +7,14 @@ import com.semicolon.africa.data.model.Verification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface VerificationService {
 
     Verification performFullverification(LoanApplication loanApplication, List<Document> documents);
 
-    Verification verifyEnrolment(Student student);
+    Optional<Verification> verifyEnrolment(Student student);
 
     Boolean validateDocument(LoanApplication loanApplication);
 
